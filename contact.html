@@ -39,11 +39,13 @@
         <div class="card">
           <p class="muted">Ready to take your business to the next level? Get in touch with us today to discover how Arpeggio Resources, LLC can help you achieve your goals.</p>
 
-          <form id="contact-form" action="https://formsubmit.co/ajax/ragarrity17@gmail.com" method="POST" novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
+          <form id="contact-form" action="https://formsubmit.co/ragarrity17@gmail.com" method="POST" novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
             <!-- Honeypot field to trap bots -->
             <input type="text" name="_honey" id="_honey" class="hp-field" autocomplete="off" />
             <!-- Disable default reCAPTCHA (we're using honeypot) -->
             <input type="hidden" name="_captcha" value="false" />
+            <!-- After successful submission, formsubmit will redirect back with ?success=1 -->
+            <input type="hidden" name="_next" value="contact.html?success=1" />
             <!-- Use table template for email formatting -->
             <input type="hidden" name="_template" value="table" />
             <!-- Custom subject line -->
@@ -102,10 +104,13 @@
           status.style.color = isError ? '#d00' : '#0a0';
         }
 
-        function showModal(){
+        // If redirected back with ?success=1 show a short thank-you
+        if (new URLSearchParams(window.location.search).get('success') === '1'){
+          showStatus('Message sent!', false);
           modal.classList.add('show');
           modal.setAttribute('aria-hidden','false');
         }
+
         function hideModal(){
           modal.classList.remove('show');
           modal.setAttribute('aria-hidden','true');
@@ -114,48 +119,20 @@
         closeModal.addEventListener('click', hideModal);
         modal.addEventListener('click', (e)=>{ if(e.target===modal) hideModal(); });
 
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-
+        // Simple client-side validation; allow normal (non-AJAX) submission when valid
+        form.addEventListener('submit', (e) => {
           // honeypot: silently drop if filled
-          if (form._honey && form._honey.value) return;
+          if (form._honey && form._honey.value) { e.preventDefault(); return; }
 
           const email = (form.email.value || '').trim();
           const message = (form.message.value || '').trim();
-
-          // basic client-side validation
           const emailRegex = /^\S+@\S+\.\S+$/;
-          if (!emailRegex.test(email)) { showStatus('Please enter a valid email address.'); return; }
-          if (message.length < 5) { showStatus('Please enter a longer message.'); return; }
+          if (!emailRegex.test(email)) { e.preventDefault(); showStatus('Please enter a valid email address.'); form.email.focus(); return; }
+          if (message.length < 5) { e.preventDefault(); showStatus('Please enter a longer message.'); form.message.focus(); return; }
 
+          // let the browser perform the POST; show a quick submitting state to avoid double submits
+          showStatus('Submitting...', false);
           submitBtn.disabled = true;
-          const originalLabel = submitBtn.textContent;
-          submitBtn.textContent = 'Sending...';
-          showStatus('');
-
-          try {
-            const formData = new FormData(form);
-            const res = await fetch(form.action, {
-              method: 'POST',
-              body: formData,
-              headers: { 'Accept': 'application/json' }
-            });
-
-            if (res.ok) {
-              showStatus('Message sent!', false);
-              form.reset();
-              showModal();
-            } else {
-              const data = await res.json().catch(()=>null);
-              const errMsg = (data && data.message) ? data.message : 'Submission failed — please try again later.';
-              showStatus(errMsg);
-            }
-          } catch (err) {
-            showStatus('Network error — please try again later.');
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalLabel;
-          }
         });
       })();
     </script>
