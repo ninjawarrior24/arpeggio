@@ -6,9 +6,6 @@
     <title>Arpeggio — Contact</title>
     <link rel="stylesheet" href="css/style.css" />
     <style>
-      /* Honeypot — keep hidden from humans but present for bots */
-      .hp-field { position: absolute; left: -9999px; top: -9999px; }
-
       /* Simple Thank You modal */
       .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
       .modal { background: #fff; padding: 24px; max-width: 420px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -40,8 +37,6 @@
           <p class="muted">Ready to take your business to the next level? Get in touch with us today to discover how Arpeggio Resources, LLC can help you achieve your goals.</p>
 
           <form id="contact-form" action="https://formsubmit.co/ragarrity17@gmail.com" method="POST" novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
-            <!-- Honeypot field to trap bots -->
-            <input type="text" name="_honey" id="_honey" class="hp-field" autocomplete="off" />
             <!-- Disable default reCAPTCHA (we're using honeypot) -->
             <input type="hidden" name="_captcha" value="false" />
             <!-- After successful submission, formsubmit will redirect back with ?success=1 -->
@@ -121,9 +116,6 @@
 
         // Simple client-side validation; allow normal (non-AJAX) submission when valid
         form.addEventListener('submit', (e) => {
-          // honeypot: silently drop if filled
-          if (form._honey && form._honey.value) { e.preventDefault(); return; }
-
           const email = (form.email.value || '').trim();
           const message = (form.message.value || '').trim();
           const emailRegex = /^\S+@\S+\.\S+$/;
