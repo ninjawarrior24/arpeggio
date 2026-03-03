@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -14,17 +14,17 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - name: Archive site for upload
-        if: runner.os == 'Linux'
-        run: |
-          tar --dereference --hard-dereference --directory "." -cvf "$RUNNER_TEMP/artifact.tar" --exclude=.git --exclude=.github .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
-          retention-days: 1
-          if-no-files-found: error
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
