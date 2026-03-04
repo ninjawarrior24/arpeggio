@@ -40,11 +40,15 @@
             <!-- Disable default reCAPTCHA (we're using honeypot) -->
             <input type="hidden" name="_captcha" value="false" />
             <!-- After successful submission, formsubmit will redirect back with ?success=1 -->
-            <input type="hidden" name="_next" value="contact.html?success=1" />
+            <input type="hidden" name="_next" id="contact-_next" value="contact.html?success=1" />
             <!-- Use table template for email formatting -->
             <input type="hidden" name="_template" value="table" />
             <!-- Custom subject line -->
             <input type="hidden" name="_subject" value="New message from Arpeggio website" />
+            <!-- Honeypot field to reduce spam (leave empty) -->
+            <input type="text" name="_honey" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" tabindex="-1" autocomplete="off" />
+            <!-- Hidden reply-to that will be populated from the visible email field before submit -->
+            <input type="hidden" name="_replyto" id="_replyto" />
 
             <div class="form-group">
               <label for="fname">First name</label>
@@ -56,7 +60,8 @@
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input id="email" name="email" type="email" required />
+              <input id="email" name="email" type="email" required aria-required="true" aria-describedby="emailHelp" />
+              <div id="emailHelp" class="visually-hidden">We'll use this address to reply to you.</div>
             </div>
             <div class="form-group">
               <label for="message">Message</label>
@@ -99,6 +104,9 @@
           status.style.color = isError ? '#d00' : '#0a0';
         }
 
+        // Ensure formsubmit redirects back to the same origin (avoids FormSubmit default page)
+        try { const nx = document.getElementById('contact-_next'); if (nx) nx.value = window.location.origin + '/thankyou.html?success=1'; } catch(e){}
+
         // If redirected back with ?success=1 show a short thank-you
         if (new URLSearchParams(window.location.search).get('success') === '1'){
           showStatus('Message sent!', false);
@@ -116,11 +124,18 @@
 
         // Simple client-side validation; allow normal (non-AJAX) submission when valid
         form.addEventListener('submit', (e) => {
+          // If honeypot is filled, block submission
+          if ((form['_honey'] && form['_honey'].value.trim() !== '')) { e.preventDefault(); showStatus('Spam detected.'); return; }
+
           const email = (form.email.value || '').trim();
           const message = (form.message.value || '').trim();
           const emailRegex = /^\S+@\S+\.\S+$/;
           if (!emailRegex.test(email)) { e.preventDefault(); showStatus('Please enter a valid email address.'); form.email.focus(); return; }
           if (message.length < 5) { e.preventDefault(); showStatus('Please enter a longer message.'); form.message.focus(); return; }
+
+          // populate hidden _replyto for formsubmit so replies go to the sender
+          const replyField = document.getElementById('_replyto');
+          if (replyField) replyField.value = email;
 
           // let the browser perform the POST; show a quick submitting state to avoid double submits
           showStatus('Submitting...', false);

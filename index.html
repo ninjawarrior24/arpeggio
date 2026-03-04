@@ -73,16 +73,21 @@
                                     
                                 
                                     <input type="hidden" name="_captcha" value="false" />
-                                    <input type="hidden" name="_next" value="index.html?success=1" />
+                                    <!-- _next will be set to the current origin so FormSubmit redirects back to your site -->
+                                    <input type="hidden" name="_next" id="home-_next" value="index.html?success=1" />
                                     <input type="hidden" name="_template" value="table" />
                                     <input type="hidden" name="_subject" value="New message from Arpeggio website" />
+                                    <!-- Honeypot and reply-to -->
+                                    <input type="text" name="_honey" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" tabindex="-1" autocomplete="off" />
+                                    <input type="hidden" name="_replyto" id="home-_replyto" />
                                     <div class="form-group">
                                         <label for="name">Name</label>
                                         <input id="name" name="name" type="text" required />
                                     </div>
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input id="email" name="email" type="email" required />
+                                        <input id="email" name="email" type="email" required aria-required="true" aria-describedby="home-emailHelp" />
+                                        <div id="home-emailHelp" class="visually-hidden">We'll use this address to reply to you.</div>
                                     </div>
                                     <div class="form-group">
                                         <label for="message">Message</label>
@@ -118,6 +123,26 @@
                         inner.style.transition = 'transform .25s cubic-bezier(.2,.9,.25,1), box-shadow .25s';
                     });
                 });
+            })();
+        </script>
+        <script>
+            // Populate hidden fields for FormSubmit to redirect back to site and set reply-to
+            (function(){
+                try{
+                    const nx = document.getElementById('home-_next');
+                    if(nx) nx.value = window.location.origin + '/thankyou.html?success=1';
+                    const reply = document.getElementById('home-_replyto');
+                    const form = document.getElementById('home-contact-form');
+                    if(form){
+                        form.addEventListener('submit', (e)=>{
+                            if (form['_honey'] && form['_honey'].value.trim() !== '') { e.preventDefault(); alert('Spam detected.'); return; }
+                            const email = (form.email.value || '').trim();
+                            const emailRegex = /^\S+@\S+\.\S+$/;
+                            if (!emailRegex.test(email)) { e.preventDefault(); alert('Please enter a valid email address.'); form.email.focus(); return; }
+                            if(reply) reply.value = email;
+                        });
+                    }
+                }catch(e){}
             })();
         </script>
 
