@@ -26,7 +26,16 @@
         <nav class="site-nav">
           <a href="index.html">Home</a>
           <a href="team.html">Team</a>
-          <a href="portfolio.html">Portfolio</a>
+          <div class="nav-dropdown">
+            <button class="nav-dropdown-toggle">Solutions &#9662;</button>
+            <div class="nav-dropdown-menu">
+              <a href="portfolio.html">Portfolio</a>
+              <a href="sportstech.html">SportsTech</a>
+              <a href="arvrai.html">AR / VR / AI</a>
+              <a href="beone.html">BeOne Sports</a>
+              <a href="seekar.html">SeekAR</a>
+            </div>
+          </div>
           <a href="contact.html">Contact</a>
         </nav>
       </div>
@@ -40,16 +49,16 @@
           <div class="info-box">
             <div class="info-image">
               <div class="project-videos">
-                <div class="yt-thumb" data-src="https://www.youtube-nocookie.com/embed/pYDBuxeT0_Y?start=22" data-title="Branson Bourbon House — Video 1" data-id="pYDBuxeT0_Y">
-                  <img src="https://img.youtube.com/vi/pYDBuxeT0_Y/hqdefault.jpg" alt="Branson video 1 thumbnail">
-                  <button class="play-btn" aria-label="Play video"></button>
-                  <div class="label">Branson — Overview</div>
-                </div>
-
                 <div class="yt-thumb" data-src="https://www.youtube-nocookie.com/embed/5WbuCCw_iXw" data-title="Branson Bourbon House — Video 2" data-id="5WbuCCw_iXw">
                   <img src="https://img.youtube.com/vi/5WbuCCw_iXw/hqdefault.jpg" alt="Branson video 2 thumbnail">
                   <button class="play-btn" aria-label="Play video"></button>
                   <div class="label">Branson — Walkthrough</div>
+                </div>
+
+                <div class="yt-thumb" data-src="https://www.youtube-nocookie.com/embed/pYDBuxeT0_Y?start=22" data-title="Branson Bourbon House — Video 1" data-id="pYDBuxeT0_Y">
+                  <img src="https://img.youtube.com/vi/pYDBuxeT0_Y/hqdefault.jpg" alt="Branson video 1 thumbnail">
+                  <button class="play-btn" aria-label="Play video"></button>
+                  <div class="label">Branson — Overview</div>
                 </div>
               </div>
             </div>
@@ -128,8 +137,29 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <div>Arpeggio Resources, LLC — Transforming Immersive Technology into Business Success</div>
+      <div class="footer-inner container">
+        <div class="footer-brand">
+          <img class="footer-logo" src="images/arpeggiologo.png" alt="Arpeggio logo">
+          <div class="footer-brand-name">Arpeggio Resources, LLC</div>
+          <p class="footer-tagline">Transforming Immersive Technology into Business Success</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <a href="index.html">Home</a>
+          <a href="team.html">Team</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Solutions</div>
+          <a href="sportstech.html">SportsTech</a>
+          <a href="arvrai.html">AR / VR / AI</a>
+          <a href="beone.html">BeOne Sports</a>
+          <a href="seekar.html">SeekAR</a>
+        </div>
+      </div>
+      <div class="footer-bottom container">
+        <span>&copy; <script>document.write(new Date().getFullYear())</script> Arpeggio Resources, LLC. All rights reserved.</span>
       </div>
     </footer>
     <script>
