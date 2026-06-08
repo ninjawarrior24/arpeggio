@@ -82,3 +82,96 @@
   .hero-app-bubble{width:116px}
   .hero-app-bubble-download{font-size:.68rem;padding:5px 12px}
 }
+
+/* Global mobile pass: normalize all pages at phone sizes */
+@media (max-width:640px){
+  main{padding-top:calc(var(--header-height) + 20px);padding-bottom:40px}
+
+  .partner-page-hero,
+  .portfolio-hero,
+  .team-hero{padding-top:24px;padding-bottom:12px}
+
+  .partner-page-title{font-size:clamp(1.55rem,8vw,2rem);line-height:1.15}
+  .partner-page-lead{font-size:.96rem;line-height:1.6;margin-bottom:16px}
+  .partner-page-logo{width:150px;height:150px}
+
+  .partner-page-body{margin-top:22px;padding-bottom:36px}
+  .partner-page-text p,
+  .info-card p,
+  .member-bio{font-size:.95rem;line-height:1.62}
+
+  .contact-section,
+  .card,
+  .info-box .info-card{padding:18px}
+
+  .project-videos{grid-template-columns:1fr}
+
+  .beone-hero-ctas,
+  .seekar-hero-ctas,
+  .stech-hero-ctas,
+  .arvrai-hero-ctas,
+  .portfolio-hero-ctas{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+
+  .beone-hero-ctas .cta,
+  .seekar-hero-ctas .cta,
+  .stech-hero-ctas .cta,
+  .arvrai-hero-ctas .cta,
+  .portfolio-hero-ctas .cta{width:100%;text-align:center}
+
+  .home-partner-card{display:flex !important;flex-direction:column !important;overflow:hidden}
+  .home-partner-card-img{order:1;height:148px !important;min-height:0 !important;flex:0 0 148px !important;padding:16px}
+  .home-partner-card-body{order:2;display:block !important;height:auto !important;max-height:none !important;min-height:0 !important;overflow:visible !important;visibility:visible !important;opacity:1 !important}
+  .home-partner-card-body .home-partner-tag,
+  .home-partner-card-body .home-partner-name,
+  .home-partner-card-body .home-partner-desc,
+  .home-partner-card-body .cta{visibility:visible !important;opacity:1 !important}
+  .home-partner-card-body .home-partner-tag,
+  .home-partner-card-body .home-partner-name,
+  .home-partner-card-body .home-partner-desc,
+  .home-partner-card-body .cta{display:block !important}
+  .home-partner-card-body .home-partner-desc{margin-bottom:14px;font-size:.92rem;line-height:1.6}
+  .home-partner-card-body .cta{display:inline-block !important;align-self:flex-start}
+
+  .team-list{gap:18px}
+  .member-card,
+  .member-card--spotlight,
+  .member-card--support,
+  .member-card--beone{grid-template-columns:1fr !important;gap:14px !important;padding:18px !important}
+  .member-card > .member-photo,
+  .member-card > h3,
+  .member-card > .member-role,
+  .member-card > .member-bio,
+  .member-card > .member-details{grid-column:1 !important}
+  .member-photo,
+  .member-card--spotlight .member-photo,
+  .member-card--support .member-photo,
+  .member-card--beone .member-photo{height:220px !important;min-height:220px !important}
+
+  .stech-partner-row{flex-direction:column;align-items:stretch}
+  .stech-partner-card{width:100%}
+
+  .footer-inner{grid-template-columns:1fr !important;gap:20px;padding:32px 0 24px}
+  .footer-brand{grid-column:auto}
+
+  .thankyou{margin:24px auto;padding:18px}
+}
+
+@media (max-width:480px){
+  .partner-page-logo{width:128px;height:128px}
+  .partner-page-title{font-size:clamp(1.35rem,8.2vw,1.75rem)}
+
+  .seekar-stats-bar,
+  .beone-stats-bar,
+  .stech-stats-bar{grid-template-columns:1fr}
+
+  .seekar-stat,
+  .beone-stat,
+  .stech-stat{padding:18px 12px}
+
+  .home-partner-card-img{height:132px !important;flex-basis:132px !important}
+  .home-partner-card-body{padding:16px}
+  .home-partner-card-body .home-partner-name{font-size:1.1rem}
+
+  .info-box{border-radius:18px}
+  .modal{padding:18px}
+}
