@@ -175,3 +175,32 @@
   .info-box{border-radius:18px}
   .modal{padding:18px}
 }
+
+@media (max-width:640px){
+  body.page-portfolio .portfolio-tagline{font-size:.93rem;line-height:1.55;max-width:34ch;margin:8px auto 14px}
+  body.page-portfolio .info-section{padding:22px 0}
+  body.page-portfolio .info-box,
+  body.page-portfolio .info-section.rev .info-box{flex-direction:column}
+  body.page-portfolio .info-box{gap:0;border-radius:16px}
+  body.page-portfolio .info-box .info-image{min-height:180px}
+  body.page-portfolio .info-box .info-card,
+  body.page-portfolio .info-section .info-card{padding:16px 14px 18px !important}
+  body.page-portfolio .portfolio-card-meta{gap:8px;margin-bottom:10px}
+  body.page-portfolio .portfolio-num{font-size:1.45rem}
+  body.page-portfolio .info-card h3{font-size:1.18rem;line-height:1.25;margin-bottom:8px}
+  body.page-portfolio .info-card p,
+  body.page-portfolio .info-card li{font-size:.92rem;line-height:1.58}
+  body.page-portfolio .info-card ul{padding-left:18px;margin-top:6px}
+  body.page-portfolio .project-videos{grid-template-columns:1fr;gap:10px}
+  body.page-portfolio .info-card .cta{display:inline-flex;max-width:100%;white-space:normal;line-height:1.28;text-align:center;justify-content:center;padding:10px 12px}
+}
+
+@media (max-width:420px){
+  body.page-portfolio .portfolio-tagline{font-size:.89rem;max-width:31ch}
+  body.page-portfolio .info-box .info-card,
+  body.page-portfolio .info-section .info-card{padding:14px 12px 16px !important}
+  body.page-portfolio .portfolio-num{font-size:1.32rem}
+  body.page-portfolio .info-card h3{font-size:1.08rem}
+  body.page-portfolio .info-card p,
+  body.page-portfolio .info-card li{font-size:.88rem;line-height:1.56}
+}
