@@ -8,7 +8,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:#eaeef2;line-height:1.45}
+body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:#eaeef2;line-height:1.45;overflow-x:hidden}
 .container{max-width:var(--max);margin:0 auto;padding:0 20px}
 
 /* Header */
@@ -268,15 +268,18 @@ main{padding-top:calc(var(--header-height) + 28px);padding-bottom:60px}
 .white-strip .partner-link:hover{border-color:var(--accent)}
 
 /* Highlight section (below hero) */
-.highlight{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-top:28px}
+.highlight{position:relative;overflow:hidden;display:flex;align-items:center;min-height:clamp(540px,72vh,760px);width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:72px max(42px,calc((100vw - var(--max)) / 2 + 42px));margin-top:28px;border-radius:0;background:#09111d;box-sizing:border-box}
+.highlight--video-bg{isolation:isolate}
+.highlight-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.highlight-bg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(6,10,18,.86) 0%,rgba(6,10,18,.7) 42%,rgba(6,10,18,.38) 100%)}
+.highlight-content{position:relative;z-index:2;max-width:640px}
 .highlight-text h2{color:#fff;margin-bottom:8px}
-.highlight-text p{color:var(--muted);line-height:1.6}
-.highlight-image{min-height:220px;border-radius:12px;overflow:hidden}
-.highlight-image img{width:100%;height:100%;object-fit:cover;display:block}
+.highlight-text p{color:rgba(255,255,255,.78);line-height:1.7}
+.highlight--video-bg .highlight-eyebrow{color:rgba(255,255,255,.52)}
 
 @media (max-width:980px){
-  .highlight{grid-template-columns:1fr}
-  .highlight-image{min-height:180px;margin-top:18px}
+  .highlight{min-height:440px;padding:48px 24px}
+  .highlight-content{max-width:100%}
 }
 
 /* Cards & features */
