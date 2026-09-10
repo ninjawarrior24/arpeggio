@@ -114,6 +114,10 @@ export default {
 
 
 export class RateLimiter {
+  constructor(ctx) {
+    this.ctx = ctx;
+  }
+
   async fetch() {
     const now = Date.now();
     const windowMs = 10 * 60 * 1000;
