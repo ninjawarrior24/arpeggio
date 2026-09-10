@@ -16,6 +16,12 @@ function response(status, body, origin) {
   });
 }
 
+async function hash(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 function isText(value, min, max) {
   return typeof value === "string" && value.trim().length >= min && value.trim().length <= max;
 }
@@ -49,6 +55,16 @@ export default {
     }
     if (!request.headers.get("content-type")?.includes("application/json")) {
       return response(415, { error: "JSON is required." }, origin);
+    }
+
+    const ip = request.headers.get("CF-Connecting-IP");
+    if (ip) {
+      const id = env.RATE_LIMITER.idFromName(await hash(ip));
+      const limit = await env.RATE_LIMITER.get(id).fetch("https://rate-limiter/check");
+      const decision = await limit.json();
+      if (!decision.allowed) {
+        return response(429, { error: "Too many requests. Please try again later." }, origin);
+      }
     }
 
     let body;
@@ -95,3 +111,22 @@ export default {
     return response(200, { ok: true }, origin);
   },
 };
+
+
+export class RateLimiter {
+  async fetch() {
+    const now = Date.now();
+    const windowMs = 10 * 60 * 1000;
+    const limit = 5;
+    const attempts = ((await this.ctx.storage.get("attempts")) || [])
+      .filter((timestamp) => now - timestamp < windowMs);
+
+    if (attempts.length >= limit) {
+      return Response.json({ allowed: false });
+    }
+
+    attempts.push(now);
+    await this.ctx.storage.put("attempts", attempts);
+    return Response.json({ allowed: true });
+  }
+}
