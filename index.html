@@ -158,19 +158,9 @@
                     
                         <section id="contact" class="contact-section card" style="margin-top:28px">
                             <div class="contact-grid">
-                                <form id="home-contact-form" class="contact-form" action="https://formsubmit.co/ragarrity17@gmail.com" method="POST">
+                                <form id="home-contact-form" class="contact-form" data-contact-form novalidate>
                                     <h2>Contact Us</h2>
-                                    
-                                
-                                    <input type="hidden" name="_captcha" value="false" />
-                                    <!-- _next will be set to the current origin so FormSubmit redirects back to your site -->
-                                    <input type="hidden" name="_next" id="home-_next" value="index.html?success=1" />
-                                    <input type="hidden" name="_template" value="table" />
-                                    <input type="hidden" name="_subject" value="New message from Arpeggio website" />
-                                    <input type="hidden" name="_cc" value="alexbelmont018@gmail.com" />
-                                    <!-- Honeypot and reply-to -->
-                                    <input type="text" name="_honey" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" tabindex="-1" autocomplete="off" />
-                                    <input type="hidden" name="_replyto" id="home-_replyto" />
+                                    <input type="text" name="website" aria-hidden="true" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" />
                                     <div class="form-group">
                                         <label for="name">Name</label>
                                         <input id="name" name="name" type="text" required />
@@ -216,26 +206,8 @@
                 });
             })();
         </script>
-        <script>
-            // Populate hidden fields for FormSubmit to redirect back to site and set reply-to
-            (function(){
-                try{
-                    const nx = document.getElementById('home-_next');
-                    if(nx) nx.value = window.location.origin + '/thankyou.html?success=1';
-                    const reply = document.getElementById('home-_replyto');
-                    const form = document.getElementById('home-contact-form');
-                    if(form){
-                        form.addEventListener('submit', (e)=>{
-                            if (form['_honey'] && form['_honey'].value.trim() !== '') { e.preventDefault(); alert('Spam detected.'); return; }
-                            const email = (form.email.value || '').trim();
-                            const emailRegex = /^\S+@\S+\.\S+$/;
-                            if (!emailRegex.test(email)) { e.preventDefault(); alert('Please enter a valid email address.'); form.email.focus(); return; }
-                            if(reply) reply.value = email;
-                        });
-                    }
-                }catch(e){}
-            })();
-        </script>
+        <script src="js/contact-config.js"></script>
+        <script src="js/contact-form.js"></script>
 
         <script>
             // Global float-react script: makes .float-outer elements subtly react to cursor and scroll
