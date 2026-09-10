@@ -10,7 +10,8 @@ kept out of the browser and out of this repository.
 2. Create a Resend account and verify the domain that will appear in the
    `FROM_EMAIL` address. Configure its SPF/DKIM DNS records before sending.
 3. Create a Cloudflare Turnstile widget for the production site origin. Copy
-   its **site key** and **secret key**.
+   its **site key** and **secret key**. The Worker also uses a Durable Object to
+   allow at most five submissions per IP address per ten minutes.
 
 ## 2. Deploy the Worker
 
