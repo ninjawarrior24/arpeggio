@@ -60,20 +60,8 @@
         <div class="card">
           <p class="muted">Ready to take your business to the next level? Get in touch with us today to discover how Arpeggio Resources LLC can help you achieve your goals.</p>
 
-          <form id="contact-form" action="https://formsubmit.co/ragarrity17@gmail.com" method="POST" novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
-            <!-- Disable default reCAPTCHA (we're using honeypot) -->
-            <input type="hidden" name="_captcha" value="false" />
-            <!-- After successful submission, formsubmit will redirect back with ?success=1 -->
-            <input type="hidden" name="_next" id="contact-_next" value="contact.html?success=1" />
-            <!-- Use table template for email formatting -->
-            <input type="hidden" name="_template" value="table" />
-            <!-- Custom subject line -->
-            <input type="hidden" name="_subject" value="New message from Arpeggio website" />
-            <input type="hidden" name="_cc" value="alexbelmont018@gmail.com" />
-            <!-- Honeypot field to reduce spam (leave empty) -->
-            <input type="text" name="_honey" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" tabindex="-1" autocomplete="off" />
-            <!-- Hidden reply-to that will be populated from the visible email field before submit -->
-            <input type="hidden" name="_replyto" id="_replyto" />
+          <form id="contact-form" data-contact-form novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
+            <input type="text" name="website" aria-hidden="true" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" />
 
             <div class="form-group">
               <label for="fname">First name</label>
@@ -138,58 +126,8 @@
         <span>&copy; <script>document.write(new Date().getFullYear())</script> Arpeggio Resources LLC. All rights reserved.</span>
       </div>
     </footer>
-    <script>
-      (function(){
-        const form = document.getElementById('contact-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const status = document.getElementById('form-status');
-        const modal = document.getElementById('thankyou-modal');
-        const closeModal = document.getElementById('close-modal');
-
-        function showStatus(msg, isError = true){
-          status.textContent = msg;
-          status.style.color = isError ? '#d00' : '#0a0';
-        }
-
-        // Ensure formsubmit redirects back to the same origin (avoids FormSubmit default page)
-        try { const nx = document.getElementById('contact-_next'); if (nx) nx.value = window.location.origin + '/thankyou.html?success=1'; } catch(e){}
-
-        // If redirected back with ?success=1 show a short thank-you
-        if (new URLSearchParams(window.location.search).get('success') === '1'){
-          showStatus('Message sent!', false);
-          modal.classList.add('show');
-          modal.setAttribute('aria-hidden','false');
-        }
-
-        function hideModal(){
-          modal.classList.remove('show');
-          modal.setAttribute('aria-hidden','true');
-        }
-
-        closeModal.addEventListener('click', hideModal);
-        modal.addEventListener('click', (e)=>{ if(e.target===modal) hideModal(); });
-
-        // Simple client-side validation; allow normal (non-AJAX) submission when valid
-        form.addEventListener('submit', (e) => {
-          // If honeypot is filled, block submission
-          if ((form['_honey'] && form['_honey'].value.trim() !== '')) { e.preventDefault(); showStatus('Spam detected.'); return; }
-
-          const email = (form.email.value || '').trim();
-          const message = (form.message.value || '').trim();
-          const emailRegex = /^\S+@\S+\.\S+$/;
-          if (!emailRegex.test(email)) { e.preventDefault(); showStatus('Please enter a valid email address.'); form.email.focus(); return; }
-          if (message.length < 5) { e.preventDefault(); showStatus('Please enter a longer message.'); form.message.focus(); return; }
-
-          // populate hidden _replyto for formsubmit so replies go to the sender
-          const replyField = document.getElementById('_replyto');
-          if (replyField) replyField.value = email;
-
-          // let the browser perform the POST; show a quick submitting state to avoid double submits
-          showStatus('Submitting...', false);
-          submitBtn.disabled = true;
-        });
-      })();
-    </script>
-  <script src="js/mobile-nav.js"></script>
+    <script src="js/contact-config.js"></script>
+    <script src="js/contact-form.js"></script>
+    <script src="js/mobile-nav.js"></script>
   </body>
 </html>
