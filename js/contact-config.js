@@ -1,6 +1,6 @@
 // Production configuration. This file intentionally contains no recipient email
-// address or API credential. Update only after the Worker has been deployed.
+// address or API credential.
 window.ARPEGGIO_CONTACT = {
-  endpoint: "",
-  turnstileSiteKey: "",
+  endpoint: "https://arpeggio-contact.ragarrity17.workers.dev",
+  turnstileSiteKey: "0x4AAAAAAFAjzyXFcyZDR7h1",
 };
