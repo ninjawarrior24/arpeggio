@@ -1,0 +1,23 @@
+name = "arpeggio-contact"
+main = "src/index.js"
+compatibility_date = "2026-09-10"
+
+# Set these non-secret values with `wrangler deploy --var KEY:value` or in the
+# Cloudflare dashboard. Do not commit real production values if the repository
+# is public.
+# ALLOWED_ORIGIN = "https://www.example.com"
+# FROM_EMAIL = "Arpeggio Website <contact@example.com>"
+# TO_EMAIL = "inbox@example.com"
+# CC_EMAIL = "optional-copy@example.com"
+
+# Set these in Cloudflare as encrypted secrets:
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put TURNSTILE_SECRET_KEY
+
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RateLimiter"]
