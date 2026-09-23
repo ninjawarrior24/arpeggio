@@ -310,6 +310,13 @@ main{padding-top:calc(var(--header-height) + 28px);padding-bottom:60px}
 
 /* Home page */
 .hero-accent{background:linear-gradient(90deg,#fff 0%,rgba(190,170,255,.9) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(156,139,255,.35);border-radius:999px;background:rgba(59,24,255,.12);color:#d9d3ff;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.hero-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:#8f7cff;box-shadow:0 0 14px #8f7cff}
+.hero-proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;color:rgba(255,255,255,.64);font-size:.82rem}
+.hero-proof span{padding:8px 11px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.04)}
+.hero-proof strong{color:#fff}
+.hero-content h1{max-width:12ch;letter-spacing:-.04em}
+.hero-content .subtitle{max-width:54ch;font-size:1.05rem;line-height:1.7}
 .home-partners{padding:56px 0;margin-top:0;border-top:1px solid rgba(255,255,255,.05);scroll-margin-top:calc(var(--header-height) + 20px)}
 .home-partners-header{text-align:center;margin-bottom:40px}
 .home-partners-eyebrow{display:block;font-size:.65rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:8px}
@@ -372,6 +379,7 @@ footer.site-footer{color:#555;border-top:1px solid rgba(0,0,0,0.1);margin-top:60
 /* Responsive */
 @media (max-width:980px){.hero{grid-template-columns:1fr;min-height:80vh}.features{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.hero{min-height:70vh}.hero .container{grid-template-columns:1fr}.hero-app-bubble-wrap{justify-content:center;padding-bottom:32px}.features{grid-template-columns:1fr}.brand-logo{height:40px}.header-inner{padding:0 12px}}
+@media (max-width:640px){.hero-eyebrow{font-size:.6rem}.hero-proof{gap:7px}.hero-proof span{font-size:.74rem;padding:7px 9px}.hero-content h1{max-width:14ch}}
 
 /* Team page */
 
