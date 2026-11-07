@@ -1,5 +1,5 @@
 (() => {
-  const recipients = ['ragarrity17@gmail.com', 'alexbelmont018@gmail.com'];
+  const recipients = ['ragarrity17@gmail.com'];
 
   document.querySelectorAll('form[data-contact-form]').forEach((form) => {
     const submit = form.querySelector('[type="submit"]');
