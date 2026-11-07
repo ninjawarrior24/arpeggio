@@ -60,12 +60,13 @@
         <div class="card">
           <p class="muted">Ready to take your business to the next level? Get in touch with us today to discover how Arpeggio Resources LLC can help you achieve your goals.</p>
 
-          <form id="contact-form" data-contact-form novalidate style="margin-top:14px;display:grid;gap:12px;max-width:720px">
-            <input type="text" name="website" aria-hidden="true" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" />
+          <form id="contact-form" data-contact-form action="https://shipmyform.com/to/ragarrity17@gmail.com" method="post" style="margin-top:14px;display:grid;gap:12px;max-width:720px">
+            <input type="hidden" name="_subject" value="New message from Arpeggio website" />
+            <input type="text" name="_gotcha" aria-hidden="true" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;border:0;padding:0;margin:0;" />
 
             <div class="form-group">
               <label for="fname">First name</label>
-              <input id="fname" name="fname" />
+              <input id="fname" name="fname" required />
             </div>
             <div class="form-group">
               <label for="lname">Last name</label>
@@ -126,7 +127,6 @@
         <span>&copy; <script>document.write(new Date().getFullYear())</script> Arpeggio Resources LLC. All rights reserved.</span>
       </div>
     </footer>
-    <script src="js/contact-config.js"></script>
     <script src="js/contact-form.js"></script>
     <script src="js/mobile-nav.js"></script>
   </body>
