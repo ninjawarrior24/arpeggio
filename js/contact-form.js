@@ -21,10 +21,16 @@
         email: String(values.get('email') || '').trim(),
         message: String(values.get('message') || '').trim(),
         website: '',
+        turnstileToken: String(values.get('cf-turnstile-response') || ''),
       };
 
       if (!payload.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email) || payload.message.length < 5) {
         show('Please provide a valid name, email, and message.');
+        return;
+      }
+
+      if (!payload.turnstileToken) {
+        show('Please complete the quick verification check.');
         return;
       }
 
@@ -41,9 +47,11 @@
           throw new Error(result.error || 'Unable to send your message. Please try again.');
         }
         form.reset();
+        if (window.turnstile) window.turnstile.reset();
         show('Thanks — your message was sent.', false);
       } catch (error) {
         show(error.message || 'Unable to send your message. Please try again.');
+        if (window.turnstile) window.turnstile.reset();
       } finally {
         submit.disabled = false;
       }
