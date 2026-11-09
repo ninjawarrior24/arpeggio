@@ -95,6 +95,11 @@ export default {
       return response(503, { error: "Unable to send the message right now. Please try again later." }, origin);
     }
 
+    const verified = await verifyTurnstile(turnstileToken, request, env.TURNSTILE_SECRET_KEY);
+    if (!verified) {
+      return response(400, { error: "Verification failed. Please try again." }, origin);
+    }
+
     const id = crypto.randomUUID();
     const createdAt = new Date().toISOString();
     try {
@@ -103,14 +108,6 @@ export default {
       ).bind(id, name.trim(), email.trim(), message.trim(), createdAt).run();
     } catch {
       return response(503, { error: "Unable to save the message right now. Please try again later." }, origin);
-    }
-
-    const verified = await verifyTurnstile(turnstileToken, request, env.TURNSTILE_SECRET_KEY);
-    if (!verified) {
-      await env.CONTACT_DB.prepare(
-        "UPDATE contact_submissions SET delivery_status = 'failed' WHERE id = ?"
-      ).bind(id).run();
-      return response(400, { error: "Verification failed. Please try again." }, origin);
     }
 
     const cc = (env.CC_EMAIL || "")
