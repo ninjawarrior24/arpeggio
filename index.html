@@ -177,7 +177,6 @@
 .arpeggio-contact-form .form-status.is-error{color:#ff9b9b}
 .arpeggio-contact-form .form-status.is-success{color:#a8f0ba}
 .contact-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
-@media(max-width:600px){.arpeggio-contact-form .cf-turnstile{max-width:100%;overflow:hidden}}
 </style><form class="arpeggio-contact-form" data-contact-form>
   <label for="home-contact-name">Name</label>
   <input id="home-contact-name" name="name" type="text" autocomplete="name" maxlength="120" required>
@@ -189,11 +188,9 @@
     <label for="home-contact-website">Leave this field empty</label>
     <input id="home-contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
   </div>
-  <div class="cf-turnstile" data-sitekey="0x4AAAAAAFAjzyXFcyZDR7h1"></div>
   <p class="form-status" role="status" aria-live="polite"></p>
   <button class="cta" type="submit">Send Message</button>
 </form><script src="js/contact-config.js"></script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="js/contact-form.js"></script>
 </div>
                             </div>
