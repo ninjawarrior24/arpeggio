@@ -156,9 +156,13 @@ export default {
     } catch {
       // The delivery succeeded; the provider ID is optional for the local archive.
     }
-    await env.CONTACT_DB.prepare(
-      "UPDATE contact_submissions SET delivery_status = 'sent', provider_message_id = ? WHERE id = ?"
-    ).bind(providerMessageId, id).run();
+    try {
+      await env.CONTACT_DB.prepare(
+        "UPDATE contact_submissions SET delivery_status = 'sent', provider_message_id = ? WHERE id = ?"
+      ).bind(providerMessageId, id).run();
+    } catch {
+      // Email delivery succeeded; do not report failure and cause a duplicate resend.
+    }
 
     return response(200, { ok: true }, origin);
   },
