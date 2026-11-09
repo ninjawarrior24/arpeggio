@@ -9,9 +9,8 @@ kept out of the browser and out of this repository.
 1. Create a Cloudflare account and add the site domain.
 2. Create a Resend account and verify the domain that will appear in the
    `FROM_EMAIL` address. Configure its SPF/DKIM DNS records before sending.
-3. Create a Cloudflare Turnstile widget for the production site origin. Copy
-   its **site key** and **secret key**. The Worker also uses a Durable Object to
-   allow at most five submissions per IP address per ten minutes.
+3. The Worker uses a hidden honeypot field and a Durable Object rate limiter
+   allowing at most five submissions per IP address per ten minutes.
 
 ## 2. Deploy the Worker
 
@@ -20,7 +19,6 @@ From `worker/`, authenticate with Cloudflare and deploy:
 ```sh
 npx wrangler login
 npx wrangler secret put RESEND_API_KEY
-npx wrangler secret put TURNSTILE_SECRET_KEY
 npx wrangler deploy --var ALLOWED_ORIGIN:https://YOUR-SITE-ORIGIN --var FROM_EMAIL:"Arpeggio Website <contact@YOUR-DOMAIN>" --var TO_EMAIL:YOUR-RECIPIENT@YOUR-DOMAIN
 ```
 
@@ -35,12 +33,10 @@ Update [js/contact-config.js](js/contact-config.js):
 ```js
 window.ARPEGGIO_CONTACT = {
   endpoint: "https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev",
-  turnstileSiteKey: "YOUR_PUBLIC_TURNSTILE_SITE_KEY",
 };
 ```
 
-The site key is intentionally public. Do not place the Resend API key,
-Turnstile secret key, or recipient addresses in this file.
+Do not place the Resend API key or recipient addresses in this file.
 
 ## 4. Retire FormSubmit
 
@@ -54,7 +50,6 @@ erase Git history.
 
 - Submit one valid message and confirm it arrives with the visitor address as
   Reply-To.
-- Submit with an invalid Turnstile token and confirm no email arrives.
 - Submit from a different origin and confirm the Worker returns 403.
 - Confirm the browser network request contains no recipient email address,
   API key, or Turnstile secret.
