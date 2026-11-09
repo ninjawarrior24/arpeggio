@@ -26,6 +26,25 @@ function isText(value, min, max) {
   return typeof value === "string" && value.trim().length >= min && value.trim().length <= max;
 }
 
+async function verifyTurnstile(token, request, secret) {
+  if (!secret) return false;
+  const form = new FormData();
+  form.append("secret", secret);
+  form.append("response", token);
+  const ip = request.headers.get("CF-Connecting-IP");
+  if (ip) form.append("remoteip", ip);
+
+  try {
+    const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: form,
+    });
+    return result.ok && (await result.json()).success === true;
+  } catch {
+    return false;
+  }
+}
+
 function allowedOrigins(env) {
   return (env.ALLOWED_ORIGINS || env.ALLOWED_ORIGIN || "")
     .split(",")
@@ -67,17 +86,23 @@ export default {
       return response(400, { error: "Invalid request." }, origin);
     }
 
-    const { name, email, message, website } = body;
+    const { name, email, message, turnstileToken, website } = body;
     if (website) return response(200, { ok: true }, origin);
     if (!isText(name, 1, 120) ||
         !isText(email, 3, 254) ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-        !isText(message, 5, 5000)) {
-      return response(400, { error: "Please provide a valid name, email, message, and verification." }, origin);
+        !isText(message, 5, 5000) ||
+        !isText(turnstileToken, 1, 2048)) {
+      return response(400, { error: "Please provide a valid name, email, message, and verification token." }, origin);
     }
 
-    if (!env.CONTACT_DB || !env.RESEND_API_KEY || !env.FROM_EMAIL || !env.TO_EMAIL) {
+    if (!env.CONTACT_DB || !env.RESEND_API_KEY || !env.FROM_EMAIL || !env.TO_EMAIL || !env.TURNSTILE_SECRET_KEY) {
       return response(503, { error: "Unable to send the message right now. Please try again later." }, origin);
+    }
+
+    const verified = await verifyTurnstile(turnstileToken, request, env.TURNSTILE_SECRET_KEY);
+    if (!verified) {
+      return response(400, { error: "Verification failed. Please try again." }, origin);
     }
 
     const id = crypto.randomUUID();
