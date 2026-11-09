@@ -52,9 +52,37 @@
         <div class="card">
           <p class="muted">Ready to take your business to the next level? Get in touch with us today to discover how Arpeggio Resources LLC can help you achieve your goals.</p>
 
-          <iframe id="formnx-arpeggio-contact" src="https://fill.formnx.com/f/arpeggio-contact-21hb11?iframe=true&amp;fnxDynamicHeight=1&amp;fnxTransparentBg=0" title="Arpeggio Contact" height="600" style="width: 1px; min-width: 100%; border: 0;"></iframe>
-<script src="https://formnx.com/js/iframeResizer.js"></script>
-<script src="https://formnx.com/js/widget.js"></script>
+          <style>
+.arpeggio-contact-form{display:grid;gap:12px;max-width:640px;margin-top:18px}
+.arpeggio-contact-form label{font-weight:600;color:#eaeef2}
+.arpeggio-contact-form input,.arpeggio-contact-form textarea{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:#15171d;color:#fff;font:inherit}
+.arpeggio-contact-form input:focus,.arpeggio-contact-form textarea:focus{outline:2px solid #735eff;outline-offset:2px}
+.arpeggio-contact-form textarea{resize:vertical}
+.arpeggio-contact-form button:disabled{opacity:.65;cursor:wait}
+.arpeggio-contact-form .form-status{min-height:1.5em}
+.arpeggio-contact-form .form-status.is-error{color:#ff9b9b}
+.arpeggio-contact-form .form-status.is-success{color:#a8f0ba}
+.contact-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+@media(max-width:600px){.arpeggio-contact-form .cf-turnstile{max-width:100%;overflow:hidden}}
+</style>
+<form class="arpeggio-contact-form" data-contact-form>
+  <label for="contact-name">Name</label>
+  <input id="contact-name" name="name" type="text" autocomplete="name" maxlength="120" required>
+  <label for="contact-email">Email</label>
+  <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+  <label for="contact-message">Message</label>
+  <textarea id="contact-message" name="message" rows="6" maxlength="5000" required></textarea>
+  <div class="contact-honeypot" aria-hidden="true">
+    <label for="contact-website">Leave this field empty</label>
+    <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
+  </div>
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAAFAjzyXFcyZDR7h1"></div>
+  <p class="form-status" role="status" aria-live="polite"></p>
+  <button class="cta" type="submit">Send Message</button>
+</form>
+<script src="js/contact-config.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="js/contact-form.js"></script>
 
         </div>
       </div>

@@ -40,10 +40,17 @@ async function verifyTurnstile(token, request, secret) {
   return result.ok && (await result.json()).success === true;
 }
 
+function allowedOrigins(env) {
+  return (env.ALLOWED_ORIGINS || env.ALLOWED_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin");
-    if (!origin || origin !== env.ALLOWED_ORIGIN) {
+    if (!origin || !allowedOrigins(env).includes(origin)) {
       return new Response("Forbidden", { status: 403 });
     }
 
@@ -75,7 +82,7 @@ export default {
     }
 
     const { name, email, message, turnstileToken, website } = body;
-    if (website) return response(200, { ok: true }, origin); // Honeypot: silently discard.
+    if (website) return response(200, { ok: true }, origin);
     if (!isText(name, 1, 120) ||
         !isText(email, 3, 254) ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
@@ -84,34 +91,90 @@ export default {
       return response(400, { error: "Please provide a valid name, email, message, and verification." }, origin);
     }
 
+    if (!env.CONTACT_DB || !env.RESEND_API_KEY || !env.FROM_EMAIL || !env.TO_EMAIL) {
+      return response(503, { error: "Unable to send the message right now. Please try again later." }, origin);
+    }
+
     const verified = await verifyTurnstile(turnstileToken, request, env.TURNSTILE_SECRET_KEY);
-    if (!verified) return response(400, { error: "Verification failed. Please try again." }, origin);
+    if (!verified) {
+      return response(400, { error: "Verification failed. Please try again." }, origin);
+    }
 
-    const recipients = [env.TO_EMAIL];
-    if (env.CC_EMAIL) recipients.push(env.CC_EMAIL);
-    const mail = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        from: env.FROM_EMAIL,
-        to: recipients,
-        reply_to: email.trim(),
-        subject: "New message from Arpeggio website",
-        text: `Name: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`,
-      }),
-    });
+    const id = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    try {
+      await env.CONTACT_DB.prepare(
+        "INSERT INTO contact_submissions (id, name, email, message, created_at, delivery_status) VALUES (?, ?, ?, ?, ?, 'pending')"
+      ).bind(id, name.trim(), email.trim(), message.trim(), createdAt).run();
+    } catch {
+      return response(503, { error: "Unable to save the message right now. Please try again later." }, origin);
+    }
 
-    if (!mail.ok) {
-      // Do not expose provider responses or visitor data to the browser.
+    const cc = (env.CC_EMAIL || "")
+      .split(/[;,]/)
+      .map((address) => address.trim())
+      .filter(Boolean);
+    const payload = {
+      from: env.FROM_EMAIL,
+      to: [env.TO_EMAIL],
+      reply_to: email.trim(),
+      subject: "New message from Arpeggio website",
+      text: "Name: " + name.trim() +
+        "\nEmail: " + email.trim() +
+        "\n\nMessage:\n" + message.trim(),
+    };
+    if (cc.length) payload.cc = cc;
+
+    let mail;
+    try {
+      mail = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + env.RESEND_API_KEY,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      await env.CONTACT_DB.prepare(
+        "UPDATE contact_submissions SET delivery_status = 'failed' WHERE id = ?"
+      ).bind(id).run();
       return response(502, { error: "Unable to send the message. Please try again later." }, origin);
     }
+
+    if (!mail.ok) {
+      await env.CONTACT_DB.prepare(
+        "UPDATE contact_submissions SET delivery_status = 'failed' WHERE id = ?"
+      ).bind(id).run();
+      return response(502, { error: "Unable to send the message. Please try again later." }, origin);
+    }
+
+    let providerMessageId = null;
+    try {
+      const result = await mail.json();
+      providerMessageId = typeof result.id === "string" ? result.id : null;
+    } catch {
+      // The delivery succeeded; the provider ID is optional for the local archive.
+    }
+    try {
+      await env.CONTACT_DB.prepare(
+        "UPDATE contact_submissions SET delivery_status = 'sent', provider_message_id = ? WHERE id = ?"
+      ).bind(providerMessageId, id).run();
+    } catch {
+      // Email delivery succeeded; do not report failure and cause a duplicate resend.
+    }
+
     return response(200, { ok: true }, origin);
   },
-};
 
+  async scheduled(_controller, env, ctx) {
+    ctx.waitUntil(
+      env.CONTACT_DB.prepare(
+        "DELETE FROM contact_submissions WHERE created_at < strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-90 days')"
+      ).run()
+    );
+  },
+};
 
 export class RateLimiter {
   constructor(ctx) {
