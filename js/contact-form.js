@@ -1,45 +1,57 @@
 (() => {
-  const recipients = ['ragarrity17@gmail.com'];
-
   document.querySelectorAll('form[data-contact-form]').forEach((form) => {
     const submit = form.querySelector('[type="submit"]');
     const status = form.querySelector('.form-status');
 
-    function show(message, error = true) {
+    function show(message, isError = true) {
       status.textContent = message;
-      status.style.color = error ? '#d00' : '#0a0';
+      status.classList.toggle('is-error', isError);
+      status.classList.toggle('is-success', !isError);
     }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!form.reportValidity()) return;
-      if (form.elements._gotcha.value) return;
 
-      const firstName = form.elements.fname.value.trim();
-      const lastName = form.elements.lname.value.trim();
-      const email = form.elements.email.value.trim();
-      const message = form.elements.message.value.trim();
-      if (!firstName || !/^\S+@\S+\.\S+$/.test(email) || message.length < 5) {
+      const values = new FormData(form);
+      if (values.get('website')) return;
+
+      const payload = {
+        name: String(values.get('name') || '').trim(),
+        email: String(values.get('email') || '').trim(),
+        message: String(values.get('message') || '').trim(),
+        website: '',
+        turnstileToken: String(values.get('cf-turnstile-response') || ''),
+      };
+
+      if (!payload.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email) || payload.message.length < 5) {
         show('Please provide a valid name, email, and message.');
+        return;
+      }
+      if (!payload.turnstileToken) {
+        show('Please complete the verification check.');
         return;
       }
 
       submit.disabled = true;
       show('Sending…', false);
-      const data = new FormData(form);
-      data.set('name', [firstName, lastName].filter(Boolean).join(' '));
       try {
-        await Promise.all(recipients.map(async (address) => {
-          const response = await fetch('https://shipmyform.com/to/' + encodeURIComponent(address), {
-            method: 'POST',
-            headers: { Accept: 'application/json' },
-            body: data
-          });
-          if (!response.ok) throw new Error('A recipient did not accept the message.');
-        }));
-        window.location.assign('thankyou.html?success=1');
-      } catch {
-        show('Unable to send your message. Please try again later.');
+        const response = await fetch(window.ARPEGGIO_CONTACT.endpoint, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.ok !== true) {
+          throw new Error(result.error || 'Unable to send your message. Please try again.');
+        }
+        form.reset();
+        if (window.turnstile) window.turnstile.reset();
+        show('Thanks — your message was sent.', false);
+      } catch (error) {
+        show(error.message || 'Unable to send your message. Please try again.');
+        if (window.turnstile) window.turnstile.reset();
+      } finally {
         submit.disabled = false;
       }
     });
